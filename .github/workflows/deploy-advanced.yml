@@ -1,0 +1,100 @@
+name: Deploy to App Service (Advanced)
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.artifact.outputs.name }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+      continue-on-error: true
+
+    - name: Build application
+      run: npm run build
+
+    - name: Generate artifact name
+      id: artifact
+      run: |
+        BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        ARTIFACT_NAME="build-${BRANCH_NAME}-${TIMESTAMP}"
+        echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ steps.artifact.outputs.name }}
+        path: dist/
+        retention-days: 7
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ needs.build.outputs.artifact-name }}
+        path: dist/
+
+    - name: Deploy to Azure App Service (Staging)
+      uses: Azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_APP_NAME_STAGING }}
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_STAGING }}
+        package: dist/
+
+    - name: Post deployment message
+      run: |
+        echo "✅ Deployed to staging: https://${{ secrets.AZURE_APP_NAME_STAGING }}.azurewebsites.net"
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://${{ secrets.AZURE_APP_NAME_PRODUCTION }}.azurewebsites.net
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ needs.build.outputs.artifact-name }}
+        path: dist/
+
+    - name: Deploy to Azure App Service (Production)
+      uses: Azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_APP_NAME_PRODUCTION }}
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_PRODUCTION }}
+        package: dist/
+
+    - name: Post deployment message
+      run: |
+        echo "✅ Deployed to production: https://${{ secrets.AZURE_APP_NAME_PRODUCTION }}.azurewebsites.net"
