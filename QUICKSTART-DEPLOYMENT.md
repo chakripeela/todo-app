@@ -3,6 +3,7 @@
 ## 🚀 Fastest Setup (60 seconds)
 
 ### Step 1: Create Azure App Service
+
 ```bash
 # Windows PowerShell
 .\scripts\setup-azure-deployment.ps1
@@ -12,11 +13,13 @@ bash scripts/setup-azure-deployment.sh
 ```
 
 ### Step 2: Copy GitHub Secrets
+
 1. Visit: `https://github.com/YOUR_USERNAME/TODO_REPO/settings/secrets/actions`
 2. Add `AZURE_APP_NAME` secret
 3. Add `AZURE_PUBLISH_PROFILE` secret (from script output)
 
 ### Step 3: Deploy!
+
 ```bash
 git push origin main
 ```
@@ -26,6 +29,7 @@ git push origin main
 ## 📋 What Gets Deployed
 
 ✅ **Workflow**: `.github/workflows/deploy.yml`
+
 - Triggers on pushes to `main` branch
 - Builds React app with Vite
 - Deploys to Azure App Service
@@ -35,11 +39,13 @@ git push origin main
 ## 🔍 Monitor Deployment
 
 ### In GitHub
+
 - Go to **Actions** tab
 - Click the latest workflow run
 - Watch build progress in real-time
 
 ### In Azure
+
 - Go to **Deployment Center**
 - View deployment history
 - Check **Log stream** for live output
@@ -77,11 +83,11 @@ Deploy to Azure App Service
 
 ## 🆘 Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Build fails | Check Node version (should be 18) |
-| App shows 404 | Set `SCM_DO_BUILD_DURING_DEPLOYMENT=true` |
-| Deployment stuck | Check GitHub Actions logs |
+| Issue              | Solution                                         |
+| ------------------ | ------------------------------------------------ |
+| Build fails        | Check Node version (should be 18)                |
+| App shows 404      | Set `SCM_DO_BUILD_DURING_DEPLOYMENT=true`        |
+| Deployment stuck   | Check GitHub Actions logs                        |
 | Can't find secrets | Ensure you're in repo Settings, not Organization |
 
 ---
@@ -89,20 +95,25 @@ Deploy to Azure App Service
 ## 📚 Advanced Options
 
 ### Staging & Production
+
 Use **`.github/workflows/deploy-advanced.yml`** for separate environments:
+
 ```yaml
 main branch     → Production
 staging branch  → Staging
 ```
 
 Requires additional secrets:
+
 - `AZURE_APP_NAME_PRODUCTION`
 - `AZURE_PUBLISH_PROFILE_PRODUCTION`
 - `AZURE_APP_NAME_STAGING`
 - `AZURE_PUBLISH_PROFILE_STAGING`
 
 ### Environment Protection
+
 Add GitHub environment requirements:
+
 1. Go to **Settings** > **Environments**
 2. Create "production" environment
 3. Add required reviewers for deployments
@@ -112,6 +123,7 @@ Add GitHub environment requirements:
 ## 🔄 Continuous Deployments
 
 Once set up, every push to `main` automatically:
+
 1. ✅ Installs dependencies
 2. ✅ Builds application
 3. ✅ Runs linter (optional)
@@ -123,6 +135,7 @@ Once set up, every push to `main` automatically:
 ## 📖 Full Documentation
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for:
+
 - Detailed setup instructions
 - Azure CLI alternative
 - Manual deployment steps

@@ -74,14 +74,17 @@ az webapp create \
 ## Troubleshooting
 
 ### Build fails with module not found
+
 - Ensure `npm ci` runs to install exact dependencies
 - Check Node.js version compatibility
 
 ### App shows 404 error
+
 - Verify App Service has `SCM_DO_BUILD_DURING_DEPLOYMENT` set to `true`
 - Check Application Insights for detailed logs
 
 ### Deployment seems stuck
+
 - Check GitHub Actions logs for build errors
 - Verify publish profile hasn't expired
 - Check Azure App Service logs in Kudu
@@ -89,9 +92,11 @@ az webapp create \
 ### View Live Logs
 
 Access logs in Azure Portal:
+
 1. Go to App Service
 2. **Monitoring** > **Log stream**
 3. Or use Azure CLI:
+
 ```bash
 az webapp log tail --resource-group <resource-group> --name <app-name>
 ```
@@ -112,7 +117,7 @@ az webapp config appsettings set \
 The GitHub Actions workflow:
 
 1. **Trigger**: On push to `main` branch
-2. **Build**: 
+2. **Build**:
    - Sets up Node.js 18
    - Installs dependencies with `npm ci`
    - Builds with `npm run build`

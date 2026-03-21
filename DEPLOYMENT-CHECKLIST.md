@@ -3,6 +3,7 @@
 ## Pre-Deployment Setup
 
 ### Local Setup
+
 - [ ] Clone repository
 - [ ] Install Node.js 18+
 - [ ] Run `npm install`
@@ -10,6 +11,7 @@
 - [ ] Build locally: `npm run build`
 
 ### Azure Setup
+
 - [ ] Create Azure account (if needed)
 - [ ] Install Azure CLI
 - [ ] Run `az login` to authenticate
@@ -21,6 +23,7 @@
   - [ ] Option C: Manual creation via Azure CLI
 
 ### GitHub Setup
+
 - [ ] Go to repository Settings
 - [ ] Navigate to: **Secrets and variables** > **Actions**
 - [ ] Add secret: `AZURE_APP_NAME`
@@ -32,11 +35,13 @@
 ## Azure Configuration
 
 ### Resource Group
+
 - [ ] Resource group created
 - [ ] Correct region selected
 - [ ] Note the name: `_________________`
 
 ### App Service
+
 - [ ] App Service created with name: `_________________`
 - [ ] Runtime: Node 18-lts
 - [ ] Operating System: Linux
@@ -48,6 +53,7 @@
 ## First Deployment
 
 ### Code Preparation
+
 - [ ] Code committed to local main branch
 - [ ] No uncommitted changes
 - [ ] Review workflow files created:
@@ -55,12 +61,14 @@
   - [ ] `.github/workflows/deploy-advanced.yml` (optional)
 
 ### Push and Deploy
+
 - [ ] Push to main branch: `git push origin main`
 - [ ] Go to GitHub **Actions** tab
 - [ ] Watch workflow execution
 - [ ] Check for any errors
 
 ### Verification
+
 - [ ] Workflow completed successfully ✅
 - [ ] No red X marks in Actions
 - [ ] Visit deployment URL: `https://<app-name>.azurewebsites.net`
@@ -73,24 +81,28 @@
 If deployment fails:
 
 ### Build Step Failed
+
 - [ ] Check Node.js version: `npm -v`
 - [ ] Check for syntax errors: `npm run lint`
 - [ ] Verify dependencies: `npm ci`
 - [ ] Check GitHub Actions logs for specific error
 
 ### Deployment Failed
+
 - [ ] Verify publish profile is valid (not expired)
 - [ ] Check App Service exists in Azure
 - [ ] Verify secret names are exact (case-sensitive)
 - [ ] Check Azure App Service deployment logs
 
 ### App Shows Blank/404
+
 - [ ] Verify `SCM_DO_BUILD_DURING_DEPLOYMENT` = true
 - [ ] Check App Service configuration
 - [ ] Review application insights logs
 - [ ] Check Kudu console: `https://<app-name>.scm.azurewebsites.net`
 
 ### Need to Redeploy
+
 - [ ] Manual redeploy:
   ```bash
   az webapp deployment source config-zip \
@@ -102,6 +114,7 @@ If deployment fails:
 ## Ongoing Maintenance
 
 ### Regular Tasks
+
 - [ ] Monitor deployment frequency
 - [ ] Check GitHub Actions logs monthly
 - [ ] Review Azure costs
@@ -109,11 +122,13 @@ If deployment fails:
 - [ ] Monitor application performance
 
 ### Updates to Workflow
+
 - [ ] Test changes in feature branch first
 - [ ] Create pull request for review
 - [ ] Merge to main to trigger deployment
 
 ### Scaling
+
 - [ ] If app is slow: upgrade App Service plan
 - [ ] Add Application Insights for monitoring
 - [ ] Consider Azure CDN for static assets
@@ -128,11 +143,11 @@ If deployment fails:
 
 ## Support Resources
 
-| Issue | Documentation |
-|-------|---|
-| General setup | [DEPLOYMENT.md](./DEPLOYMENT.md) |
-| Quick reference | [QUICKSTART-DEPLOYMENT.md](./QUICKSTART-DEPLOYMENT.md) |
-| GitHub Actions | [GitHub Docs](https://docs.github.com/en/actions) |
+| Issue             | Documentation                                                      |
+| ----------------- | ------------------------------------------------------------------ |
+| General setup     | [DEPLOYMENT.md](./DEPLOYMENT.md)                                   |
+| Quick reference   | [QUICKSTART-DEPLOYMENT.md](./QUICKSTART-DEPLOYMENT.md)             |
+| GitHub Actions    | [GitHub Docs](https://docs.github.com/en/actions)                  |
 | Azure App Service | [Azure Docs](https://learn.microsoft.com/en-us/azure/app-service/) |
 
 ## 🎉 Success Criteria
