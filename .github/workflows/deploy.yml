@@ -31,8 +31,9 @@ jobs:
           cp app.js deploy/
           cp package.json deploy/
           cp package-lock.json deploy/
-          cp .deployment deploy/
-          cp deploy.sh deploy/
+          cd deploy
+          npm ci --omit=dev
+          cd ..
 
       - name: Deploy to Azure App Service
         uses: Azure/webapps-deploy@v2
@@ -41,10 +42,3 @@ jobs:
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           package: deploy/
           clean: true
-
-      - name: Post-deployment message
-        run: |
-          echo "✅ Deployment complete!"
-          echo "❗ Important: Ensure your App Service startup command is set to 'npm start'"
-          echo "   Go to Azure Portal → App Service → Configuration → General settings → Startup command"
-          echo "   OR use: az webapp config set --resource-group YOUR_RG --name YOUR_APP_NAME --startup-file 'npm start'"
