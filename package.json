@@ -9,10 +9,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "start": "node app.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "express": "^4.18.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^6.20.0"
