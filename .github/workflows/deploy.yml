@@ -31,6 +31,7 @@ jobs:
           cp app.js deploy/
           cp package.json deploy/
           cp package-lock.json deploy/
+          cp .deployment deploy/
 
       - name: Deploy to Azure App Service
         uses: Azure/webapps-deploy@v2
