@@ -30,14 +30,6 @@ jobs:
       - name: Copy web.config to dist
         run: cp web.config dist/
 
-      - name: Prepare deployment package
-        run: |
-          mkdir -p deploy
-          cp -r dist deploy/
-          cp app.js deploy/
-          cp package.json deploy/
-          cp package-lock.json deploy/
-
       - name: Generate artifact name
         id: artifact
         run: |
@@ -48,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.artifact.outputs.name }}
-          path: app-*.zip
+          path: dist/
           retention-days: 7
 
   deploy-staging:
@@ -61,7 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.artifact-name }}
-          path: ./
+          path: dist/
 
       - name: Deploy to Azure App Service (Staging)
         uses: Azure/webapps-deploy@v2
@@ -69,6 +61,7 @@ jobs:
           app-name: ${{ secrets.AZURE_APP_NAME_STAGING }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_STAGING }}
           package: dist/
+          clean: true
 
       - name: Post deployment message
         run: |
@@ -87,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.artifact-name }}
-          path: ./
+          path: dist/
 
       - name: Deploy to Azure App Service (Production)
         uses: Azure/webapps-deploy@v2
@@ -95,6 +88,7 @@ jobs:
           app-name: ${{ secrets.AZURE_APP_NAME_PRODUCTION }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_PRODUCTION }}
           package: dist/
+          clean: true
 
       - name: Post deployment message
         run: |
