@@ -45,13 +45,12 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           ARTIFACT_NAME="build-${BRANCH_NAME}-${TIMESTAMP}"
           echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
-          echo "path=deploy" >> $GITHUB_OUTPUT
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.artifact.outputs.name }}
-          path: deploy/
+          path: dist/
           retention-days: 7
 
   deploy-staging:
@@ -64,15 +63,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.artifact-name }}
-          path: deploy/
+          path: dist/
 
       - name: Deploy to Azure App Service (Staging)
         uses: Azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_NAME_STAGING }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_STAGING }}
-          package: deploy/
-          clean: true
+          package: dist/
 
       - name: Post deployment message
         run: |
@@ -91,15 +89,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.artifact-name }}
-          path: deploy/
+          path: dist/
 
       - name: Deploy to Azure App Service (Production)
         uses: Azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_NAME_PRODUCTION }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_PRODUCTION }}
-          package: deploy/
-          clean: true
+          package: dist/
 
       - name: Post deployment message
         run: |
