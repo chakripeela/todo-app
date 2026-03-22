@@ -32,12 +32,7 @@ jobs:
           cp package.json deploy/
           cp package-lock.json deploy/
           cp .deployment deploy/
-          cp tsconfig.json deploy/
-          cp tsconfig.app.json deploy/
-          cp tsconfig.node.json deploy/
-          cp vite.config.ts deploy/
-          cp eslint.config.js deploy/
-          cp -r src deploy/
+          cp deploy.sh deploy/
 
       - name: Deploy to Azure App Service
         uses: Azure/webapps-deploy@v2
