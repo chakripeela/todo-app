@@ -1,26 +1,31 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TodoList } from "./pages/TodoList";
 import { CreateTodo } from "./pages/CreateTodo";
 import { Todo } from "./types";
+import { fetchTasks } from "./api";
 import "./styles/App.css";
 
 export const TodoContext = createContext<{
   todos: Todo[];
-  setTodos: (todos: Todo[]) => void;
+  setTodos: Dispatch<SetStateAction<Todo[]>>;
 } | null>(null);
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([
-    {
-      id: "1",
-      title: "Welcome to Todo App",
-      description:
-        "This is your first todo. You can mark it as done or delete it!",
-      completed: false,
-      createdAt: new Date(),
-    },
-  ]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    const loadTodos = async () => {
+      try {
+        const tasks = await fetchTasks();
+        setTodos(tasks);
+      } catch (error) {
+        console.error("Failed to load tasks", error);
+      }
+    };
+
+    void loadTodos();
+  }, []);
 
   return (
     <TodoContext.Provider value={{ todos, setTodos }}>

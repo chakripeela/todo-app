@@ -34,6 +34,19 @@ npm run dev
 
 The app will be available at `http://localhost:5173` (or the next available port).
 
+### API Configuration
+
+This frontend now loads todos from the API.
+
+- Default API base URL: `http://10.1.2.250`
+- Override with environment variable: `VITE_API_BASE_URL`
+
+Example `.env`:
+
+```bash
+VITE_API_BASE_URL=http://10.1.2.250
+```
+
 ### Build
 
 Build for production:

@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TodoContext } from "../App";
-import { Todo } from "../types";
+import { createTask } from "../api";
 import "../styles/CreateTodo.css";
 
 export function CreateTodo() {
@@ -11,7 +11,7 @@ export function CreateTodo() {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -20,16 +20,17 @@ export function CreateTodo() {
       return;
     }
 
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      title: title.trim(),
-      description: description.trim(),
-      completed: false,
-      createdAt: new Date(),
-    };
+    try {
+      const newTodo = await createTask({
+        title: title.trim(),
+        description: description.trim(),
+      });
 
-    setTodos([newTodo, ...todos]);
-    navigate("/");
+      setTodos([newTodo, ...todos]);
+      navigate("/");
+    } catch {
+      setError("Failed to create todo. Please try again.");
+    }
   };
 
   return (
