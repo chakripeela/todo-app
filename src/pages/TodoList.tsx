@@ -6,8 +6,12 @@ import "../styles/TodoList.css";
 
 export function TodoList() {
   const { todos, setTodos } = useContext(TodoContext)!;
-  const [updatingTodoIds, setUpdatingTodoIds] = useState<Set<string>>(new Set());
-  const [deletingTodoIds, setDeletingTodoIds] = useState<Set<string>>(new Set());
+  const [updatingTodoIds, setUpdatingTodoIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const [deletingTodoIds, setDeletingTodoIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   const toggleComplete = async (id: string) => {
     if (updatingTodoIds.has(id)) {
