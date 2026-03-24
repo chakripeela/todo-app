@@ -1,6 +1,17 @@
 import { Todo } from "./types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://10.1.2.250";
+type RuntimeProcessEnv = {
+  process?: {
+    env?: {
+      API_BASE_URL?: string;
+    };
+  };
+};
+
+const runtimeApiBaseUrl = (globalThis as RuntimeProcessEnv).process?.env
+  ?.API_BASE_URL;
+const API_BASE_URL =
+  runtimeApiBaseUrl || import.meta.env.VITE_API_BASE_URL || "http://10.1.2.250";
 const TASKS_ENDPOINT = `${API_BASE_URL}/api/tasks`;
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
