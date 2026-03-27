@@ -1,3 +1,4 @@
+import { msalInstance } from "./msal";
 import { Todo } from "./types";
 
 // In production, API calls go to the same origin (proxied by server.js).
@@ -11,10 +12,27 @@ const TASKS_ENDPOINT = `${API_BASE_URL}/api/tasks`;
 
 // The signup function has been removed as it is only used for old signup.
 
+async function getAccessToken() {
+  const accounts = msalInstance.getAllAccounts();
+  if (!accounts || accounts.length === 0) return undefined;
+  try {
+    const response = await msalInstance.acquireTokenSilent({
+      account: accounts[0],
+      scopes: ["User.Read"], // Adjust scopes as needed
+    });
+    return response.accessToken;
+  } catch (e) {
+    // fallback to interactive if needed
+    return undefined;
+  }
+}
+
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = await getAccessToken();
   const response = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options?.headers || {}),
     },
     ...options,
