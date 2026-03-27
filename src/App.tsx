@@ -26,7 +26,7 @@ export const TodoContext = createContext<{
   setTodos: Dispatch<SetStateAction<Todo[]>>;
 } | null>(null);
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   const isAuthenticated = useIsAuthenticated();
   const { inProgress } = useMsal();
   const location = useLocation();
@@ -38,8 +38,10 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   }
   return children;
 }
+
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [loadingTodos, setLoadingTodos] = useState(false);
   const isAuthenticated = useIsAuthenticated();
   const { instance, accounts } = useMsal();
   const account = accounts && accounts.length > 0 ? accounts[0] : undefined;
@@ -51,11 +53,14 @@ function App() {
   useEffect(() => {
     if (!isAuthenticated) return;
     const loadTodos = async () => {
+      setLoadingTodos(true);
       try {
         const tasks = await fetchTasks();
         setTodos(tasks);
       } catch (error) {
         console.error("Failed to load tasks", error);
+      } finally {
+        setLoadingTodos(false);
       }
     };
     void loadTodos();
@@ -84,30 +89,39 @@ function App() {
               </>
             )}
           </div>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Login />
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <RequireAuth>
-                  <TodoList />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/create"
-              element={
-                <RequireAuth>
-                  <CreateTodo />
-                </RequireAuth>
-              }
-            />
-          </Routes>
+          {loadingTodos && isAuthenticated ? (
+            <div
+              className="loading"
+              style={{ textAlign: "center", margin: "2rem" }}
+            >
+              Loading todos...
+            </div>
+          ) : (
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  isAuthenticated ? <Navigate to="/" replace /> : <Login />
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <RequireAuth>
+                    <TodoList />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/create"
+                element={
+                  <RequireAuth>
+                    <CreateTodo />
+                  </RequireAuth>
+                }
+              />
+            </Routes>
+          )}
         </div>
       </BrowserRouter>
     </TodoContext.Provider>

@@ -5,9 +5,11 @@ import React from "react";
 export function Login() {
   const { instance, inProgress } = useMsal();
   const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const handleMsalLogin = () => {
     setError("");
+    setLoading(true);
     instance.loginRedirect({
       scopes: ["User.Read"], // Adjust scopes as needed
     });
@@ -23,9 +25,9 @@ export function Login() {
             type="button"
             className="btn btn-primary"
             onClick={handleMsalLogin}
-            disabled={inProgress !== "none"}
+            disabled={inProgress !== "none" || loading}
           >
-            Sign in with Microsoft
+            {loading ? "Signing in..." : "Sign in with Microsoft"}
           </button>
         </div>
       </div>
