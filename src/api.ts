@@ -3,7 +3,13 @@ import { Todo } from "./types";
 // In production, API calls go to the same origin (proxied by server.js).
 // In development, use VITE_API_BASE_URL for local backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
 const TASKS_ENDPOINT = `${API_BASE_URL}/api/tasks`;
+// Auth API
+
+// The login function has been removed as it is only used for old login.
+
+// The signup function has been removed as it is only used for old signup.
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, {
