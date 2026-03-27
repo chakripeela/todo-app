@@ -1,14 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import { useMsal } from "@azure/msal-react";
-import {
-  InteractionType,
-  InteractionRequiredAuthError,
-} from "@azure/msal-browser";
 import "../styles/Auth.css";
 import React from "react";
 
 export function Login() {
-  const navigate = useNavigate();
   const { instance, inProgress } = useMsal();
   const [error, setError] = React.useState("");
 

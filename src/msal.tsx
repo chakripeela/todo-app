@@ -3,13 +3,18 @@ import { MsalProvider } from "@azure/msal-react";
 
 // TODO: Replace with your actual Entra (Azure AD) app registration values
 
+const AZURE_HOST =
+  import.meta.env.VITE_AZURE_HOST || "todo-app-ui.azurewebsites.net";
+const AZURE_REDIRECT =
+  import.meta.env.VITE_AZURE_REDIRECT_URI || `https://${AZURE_HOST}/`;
+
 const getRedirectUri = () => {
   const { hostname } = window.location;
   if (hostname === "localhost") {
     return "http://localhost:5173/";
   }
-  if (hostname === "todo-app-ui.azurewebsites.net") {
-    return "https://todo-app-ui.azurewebsites.net/";
+  if (hostname === AZURE_HOST) {
+    return AZURE_REDIRECT;
   }
   return window.location.origin + "/";
 };
