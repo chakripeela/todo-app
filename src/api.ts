@@ -18,7 +18,10 @@ async function getAccessToken() {
   try {
     const response = await msalInstance.acquireTokenSilent({
       account: accounts[0],
-      scopes: ["User.Read"], // Adjust scopes as needed
+      scopes: [
+        "api://44ac30db-086a-4b08-8baf-1ec3bc4cb43e/user_impersonation",
+        "User.Read",
+      ], // Adjust scopes as needed
     });
     return response.accessToken;
   } catch (e) {
