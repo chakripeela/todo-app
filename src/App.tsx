@@ -3,6 +3,7 @@ import {
   JSX,
   useEffect,
   useState,
+  useCallback,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -18,12 +19,18 @@ import { CreateTodo } from "./pages/CreateTodo";
 import { Login } from "./pages/Login";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { Todo } from "./types";
+
 import { fetchTasks } from "./api";
 import "./styles/App.css";
 
 export const TodoContext = createContext<{
   todos: Todo[];
   setTodos: Dispatch<SetStateAction<Todo[]>>;
+} | null>(null);
+
+export const LoaderContext = createContext<{
+  showLoader: () => void;
+  hideLoader: () => void;
 } | null>(null);
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
@@ -38,13 +45,15 @@ function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   }
   return children;
 }
-
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [loadingTodos, setLoadingTodos] = useState(false);
+  const [loading, setLoading] = useState(false);
   const isAuthenticated = useIsAuthenticated();
   const { instance, accounts } = useMsal();
   const account = accounts && accounts.length > 0 ? accounts[0] : undefined;
+
+  const showLoader = useCallback(() => setLoading(true), []);
+  const hideLoader = useCallback(() => setLoading(false), []);
 
   const handleLogout = () => {
     instance.logoutRedirect();
@@ -53,50 +62,48 @@ function App() {
   useEffect(() => {
     if (!isAuthenticated) return;
     const loadTodos = async () => {
-      setLoadingTodos(true);
+      showLoader();
       try {
         const tasks = await fetchTasks();
         setTodos(tasks);
       } catch (error) {
         console.error("Failed to load tasks", error);
       } finally {
-        setLoadingTodos(false);
+        hideLoader();
       }
     };
     void loadTodos();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, showLoader, hideLoader]);
 
   return (
-    <TodoContext.Provider value={{ todos, setTodos }}>
-      <BrowserRouter>
-        <div className="app">
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              padding: "1rem",
-            }}
-          >
-            {isAuthenticated && account && (
-              <>
-                <span style={{ marginRight: "1rem" }}>
-                  {account.name || account.username}
-                </span>
-                <button className="btn btn-secondary" onClick={handleLogout}>
-                  Logout
-                </button>
-              </>
+    <LoaderContext.Provider value={{ showLoader, hideLoader }}>
+      <TodoContext.Provider value={{ todos, setTodos }}>
+        <BrowserRouter>
+          <div className="app">
+            {loading && (
+              <div className="loader-overlay">
+                <div className="loader-spinner" />
+              </div>
             )}
-          </div>
-          {loadingTodos && isAuthenticated ? (
             <div
-              className="loading"
-              style={{ textAlign: "center", margin: "2rem" }}
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                padding: "1rem",
+              }}
             >
-              Loading todos...
+              {isAuthenticated && account && (
+                <>
+                  <span style={{ marginRight: "1rem" }}>
+                    {account.name || account.username}
+                  </span>
+                  <button className="btn btn-secondary" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </>
+              )}
             </div>
-          ) : (
             <Routes>
               <Route
                 path="/login"
@@ -121,11 +128,10 @@ function App() {
                 }
               />
             </Routes>
-          )}
-        </div>
-      </BrowserRouter>
-    </TodoContext.Provider>
+          </div>
+        </BrowserRouter>
+      </TodoContext.Provider>
+    </LoaderContext.Provider>
   );
 }
-
 export default App;

@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useContext as useContextReact } from "react";
 import { useNavigate } from "react-router-dom";
 import { TodoContext } from "../App";
 import { createTask } from "../api";
+import { LoaderContext } from "../App";
 import "../styles/CreateTodo.css";
 
 export function CreateTodo() {
@@ -11,6 +12,7 @@ export function CreateTodo() {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
 
+  const { showLoader, hideLoader } = useContextReact(LoaderContext)!;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -20,16 +22,18 @@ export function CreateTodo() {
       return;
     }
 
+    showLoader();
     try {
       const newTodo = await createTask({
         title: title.trim(),
         description: description.trim(),
       });
-
       setTodos([newTodo, ...todos]);
       navigate("/");
     } catch {
       setError("Failed to create todo. Please try again.");
+    } finally {
+      hideLoader();
     }
   };
 

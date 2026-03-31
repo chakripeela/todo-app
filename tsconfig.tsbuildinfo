@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/pages/createtodo.tsx","./src/pages/todolist.tsx"],"version":"5.9.3"}
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/msal.tsx","./src/types.ts","./src/vite-env.d.ts","./src/pages/createtodo.tsx","./src/pages/login.tsx","./src/pages/todolist.tsx"],"version":"5.9.3"}
