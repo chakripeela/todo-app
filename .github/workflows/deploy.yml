@@ -1,6 +1,17 @@
 name: Deploy to Azure App Service
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: Select which App Service deployment target to use
+        required: true
+        default: both
+        type: choice
+        options:
+          - primary
+          - dr
+          - both
 
 jobs:
   build-and-deploy:
@@ -36,9 +47,18 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure App Service
+      - name: Deploy to primary Azure App Service
+        if: ${{ github.event.inputs.deploy_target == 'primary' || github.event.inputs.deploy_target == 'both' }}
         uses: Azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_NAME }}
+          package: deploy/
+          clean: true
+
+      - name: Deploy to DR Azure App Service
+        if: ${{ github.event.inputs.deploy_target == 'dr' || github.event.inputs.deploy_target == 'both' }}
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_DR_APP_NAME }}
           package: deploy/
           clean: true
